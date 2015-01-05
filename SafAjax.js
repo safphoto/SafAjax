@@ -1,8 +1,24 @@
-var ajax = {
-    request: function (url, requestType, callback, queryString) {
+// Safely create namespace
+var SAF = SAF || {};
+
+SAF.AjaxOptions = {
+    Url: null,
+    QueryString: null,
+    RequestType: null,
+    Success: null,
+    Error: null
+};
+
+SAF.AjaxProvider = function () {
+    var options = null;
+
+    this.Call = function(ajaxOptions) {
+        options = ajaxOptions
+    };
+
+    var MakeRequest = function () {
         var ids = ['MSXML2.XMLHTTP.3.0', 'MSXML2.XMLHTTP', 'Microsoft.XMLHTTP'], xhr;
 
-        // Simplification of this check while essentially doing the same thing
         if (window.XMLHttpRequest) {
             xhr = new XMLHttpRequest();
         } else {
@@ -14,28 +30,28 @@ var ajax = {
                 }
             }
         }
-        // Calling a function to return a function is redundant.
-        // Do what you're trying to with as little extra as possible.
-        //xhr.onreadystatechange = function() {
-        //    callback(xhr);
-        //};
+
         x.onreadystatechange = function () {
             if (x.readyState == 4) {
                 if (x.status == 200) {
-                    callbackFunction(x.responseText);
+                    options.Success(x.responseText);
                 } else {
-                    // request error
+                    options.Error(x);
                 }
             }
         };
 
-        xhr.open(requestType, url, true);
-        if (requestType.toUpperCase() === 'GET') {
+        xhr.open(options.RequestType, options.Url, true);
+
+        if (options.RequestType.toUpperCase() === 'GET') {
             // When initiating a get request, the send function needs no arguments at all.
             xhr.send();
-        } else if (requestType.toUpperCase() === 'POST') {
-            xhr.send(queryString);
+        } else if (options.RequestType.toUpperCase() === 'POST') {
+            xhr.send(options.QueryString);
         }
 
         // If you want to be extra careful, include an else here to handle a bad requestType
     };
+};
+
+
