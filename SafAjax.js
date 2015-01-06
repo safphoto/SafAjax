@@ -35,7 +35,8 @@ SAF.Ajax = {
         options.data = options.data || {};
 
         var getParams = function(data, url) {
-            var arr = [], str;
+            var arr = [];
+            var str;
 
             for(var name in data) {
                 arr.push(name + '=' + encodeURIComponent(data[name]));
@@ -84,7 +85,8 @@ SAF.Ajax = {
 
                 if(options.method == 'get') {
                     this.xhr.open("GET", options.url + getParams(options.data, options.url), true);
-                } else {
+                }
+                else {
                     this.xhr.open(options.method, options.url, true);
                     this.setHeaders({
                         'X-Requested-With': 'XMLHttpRequest',
@@ -97,7 +99,7 @@ SAF.Ajax = {
                 }
 
                 setTimeout(function() {
-                    options.method == 'get' ? self.xhr.send() : self.xhr.send(getParams(options.data));
+                    (options.method == 'get') ? self.xhr.send() : self.xhr.send(getParams(options.data));
                 }, 20);
 
                 return this;
