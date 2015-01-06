@@ -34,18 +34,18 @@ SAF.Ajax = {
         options.method = options.method || 'get'
         options.data = options.data || {};
 
-        var getParams = function(data, url) {
-            var arr = [];
-            var str;
+        var getFullUrl = function(data, url) {
+            var parms = [];
+            var queryString;
 
             for(var name in data) {
-                arr.push(name + '=' + encodeURIComponent(data[name]));
+                parms.push(name + '=' + encodeURIComponent(data[name]));
             }
 
-            str = arr.join('&');
+            queryString = parms.join('&');
 
-            if(str != '') {
-                return url ? (url.indexOf('?') < 0 ? '?' + str : '&' + str) : str;
+            if(queryString != '') {
+                return url ? (url.indexOf('?') < 0 ? '?' + queryString : '&' + queryString) : queryString;
             }
 
             return '';
@@ -84,7 +84,7 @@ SAF.Ajax = {
                 }
 
                 if(options.method == 'get') {
-                    this.xhr.open("GET", options.url + getParams(options.data, options.url), true);
+                    this.xhr.open("GET", options.url + getFullUrl(options.data, options.url), true);
                 }
                 else {
                     this.xhr.open(options.method, options.url, true);
@@ -99,7 +99,7 @@ SAF.Ajax = {
                 }
 
                 setTimeout(function() {
-                    (options.method == 'get') ? self.xhr.send() : self.xhr.send(getParams(options.data));
+                    (options.method == 'get') ? self.xhr.send() : self.xhr.send(getFullUrl(options.data));
                 }, 20);
 
                 return this;
