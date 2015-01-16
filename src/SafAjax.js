@@ -28,7 +28,11 @@ Ajax.request({
 
 SAF.Ajax = {
     request: function(options) {
-        if(typeof options == 'string') options = { url: options };
+        'use strict';
+
+        if(typeof options === 'string') {
+            options = { url: options };
+        }
 
         options.url = options.url || '';
         options.method = options.method || 'get'
@@ -39,12 +43,14 @@ SAF.Ajax = {
             var queryString;
 
             for(var name in data) {
-                parms.push(name + '=' + encodeURIComponent(data[name]));
+                if(data.hasOwnProperty(name)) {
+                    parms.push(name + '=' + encodeURIComponent(data[name]));
+                }
             }
 
             queryString = parms.join('&');
 
-            if(queryString != '') {
+            if(queryString !== '') {
                 return url ? (url.indexOf('?') < 0 ? '?' + queryString : '&' + queryString) : queryString;
             }
 
@@ -66,24 +72,24 @@ SAF.Ajax = {
 
                 if(this.xhr) {
                     this.xhr.onreadystatechange = function() {
-                        if(self.xhr.readyState == 4 && self.xhr.status == 200) {
+                        if(self.xhr.readyState === 4 && self.xhr.status === 200) {
                             var result = self.xhr.responseText;
 
-                            if(options.json === true && typeof JSON != 'undefined') {
+                            if(options.json === true && typeof JSON !== 'undefined') {
                                 result = JSON.parse(result);
                             }
 
                             self.successCallback && self.successCallback.apply(self.host, [result, self.xhr]);
                         }
-                        else if(self.xhr.readyState == 4) {
+                        else if(self.xhr.readyState === 4) {
                             self.errorCallback && self.errorCallback.apply(self.host, [self.xhr]);
                         }
 
                         self.alwaysCallback && self.alwaysCallback.apply(self.host, [self.xhr]);
-                    }
+                    };
                 }
 
-                if(options.method == 'get') {
+                if(options.method === 'get') {
                     this.xhr.open("GET", options.url + getFullUrl(options.data, options.url), true);
                 }
                 else {
@@ -94,12 +100,12 @@ SAF.Ajax = {
                     });
                 }
 
-                if(options.headers && typeof options.headers == 'object') {
+                if(options.headers && typeof options.headers === 'object') {
                     this.setHeaders(options.headers);
                 }
 
                 setTimeout(function() {
-                    (options.method == 'get') ? self.xhr.send() : self.xhr.send(getFullUrl(options.data));
+                    (options.method === 'get') ? self.xhr.send() : self.xhr.send(getFullUrl(options.data));
                 }, 20);
 
                 return this;
@@ -118,14 +124,16 @@ SAF.Ajax = {
             },
             setHeaders: function(headers) {
                 for(var name in headers) {
-                    this.xhr && this.xhr.setRequestHeader(name, headers[name]);
+                    if(headers.hasOwnProperty(name)) {
+                        this.xhr && this.xhr.setRequestHeader(name, headers[name]);
+                    }
                 }
             }
         };
 
         return api.process(options);
     }
-}
+};
 
 
 
